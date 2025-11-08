@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Game - 蓝色科技风</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- 加载页面 -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <h1 class="loading-title">2048</h1>
+            <p class="loading-text">正在加载游戏组件...</p>
+            <p class="loading-developer">开发者: Phyllis</p>
+            <div class="loading-progress-container">
+                <div class="loading-bar"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 技术水印模态框 -->
+    <div id="tech-watermark" class="tech-watermark">
+        <div class="watermark-container">
+            <div class="watermark-header">
+                <h2>技术渲染效果</h2>
+                <button id="close-watermark" class="close-button">×</button>
+            </div>
+            <div class="watermark-content">
+                <canvas id="watermark-canvas"></canvas>
+            </div>
+        </div>
+        
+        <!-- 技术水印加载页 -->
+        <div id="watermark-loading" class="watermark-loading">
+            <div class="watermark-loading-content">
+                <h3>渲染引擎初始化中...</h3>
+                <p class="loading-developer">Phyllis 渲染技术</p>
+                <div class="watermark-loading-progress-container">
+                    <div class="watermark-loading-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <h1>2048</h1>
+        <div class="scores-container">
+            <div class="score-box">
+                <div class="score-title">分数</div>
+                <div id="score" class="score">0</div>
+            </div>
+            <div class="score-box">
+                <div class="score-title">最高分</div>
+                <div id="best-score" class="score">0</div>
+            </div>
+        </div>
+        <div class="game-info">
+            <button id="new-game" class="new-game-btn">新游戏</button>
+            <button id="show-stats" class="stats-btn">数据看板</button>
+            <button id="show-watermark" class="watermark-btn">技术展示</button>
+        </div>
+        
+        <!-- 数据看板 -->
+        <div id="stats-panel" class="stats-panel">
+            <div class="stats-header">
+                <h3>游戏数据看板</h3>
+                <button id="close-stats" class="close-stats-btn">×</button>
+            </div>
+            <div class="stats-content">
+                <div class="stat-item">
+                    <div class="stat-label">游戏总次数</div>
+                    <div id="total-games" class="stat-value">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最高分数</div>
+                    <div id="stat-best-score" class="stat-value">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">已连续摸鱼</div>
+                    <div id="streak-count" class="stat-value">0</div>
+                    <div class="stat-unit">次</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最远移动距离</div>
+                    <div id="max-move" class="stat-value">0</div>
+                    <div class="stat-unit">格</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">最大方块数值</div>
+                    <div id="max-tile" class="stat-value">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">技术评分</div>
+                    <div id="tech-rating" class="stat-value">A+</div>
+                </div>
+                <div class="stat-item egg-stat">
+                    <div class="stat-label">隐藏成就</div>
+                    <div id="achievement" class="stat-value">「Phyllis的信徒」</div>
+                </div>
+            </div>
+        </div>
+        <div id="game-container" class="game-container">
+            <div id="game-board" class="game-board">
+                <!-- 游戏格子将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        <div class="game-over" id="game-over">
+            <div class="game-over-message">
+                <p>游戏结束!</p>
+                <button id="try-again" class="try-again-btn">再试一次</button>
+            </div>
+        </div>
+        <div class="game-won" id="game-won">
+            <div class="game-won-message">
+                <p>恭喜你赢得游戏!</p>
+                <button id="continue-game" class="continue-game-btn">继续游戏</button>
+                <button id="restart-game" class="restart-game-btn">重新开始</button>
+            </div>
+        </div>
+        <div class="game-rules">
+            <p>使用方向键或WASD移动方块。相同数字的方块碰撞时会合并成它们的和。尝试创建2048方块!</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

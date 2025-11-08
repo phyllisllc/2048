@@ -347,14 +347,21 @@ h1 {
     background-color: rgba(0, 100, 255, 0.2);
     color: #00ffff;
     border: 2px solid #00ffff;
-    padding: 10px 20px;
-    border-radius: 3px;
+    padding: 12px 20px;
+    border-radius: 10px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
     text-shadow: 0 0 5px #00ffff;
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    min-height: 48px; /* 确保足够的触摸高度 */
+    min-width: 120px; /* 确保足够的触摸宽度 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation; /* 防止双击缩放 */
+    user-select: none;
 }
 
 .new-game-btn:hover,
@@ -364,6 +371,15 @@ h1 {
     background-color: rgba(0, 100, 255, 0.4);
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
     transform: translateY(-2px);
+}
+
+/* 按钮触摸状态增强 */
+.new-game-btn:active,
+.try-again-btn:active,
+.continue-game-btn:active,
+.restart-game-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
 }
 
 /* 游戏容器 */
@@ -590,39 +606,153 @@ h1 {
     border-left: 3px solid #00ffff;
 }
 
-/* 响应式设计 */
-@media screen and (max-width: 520px) {
+/* 响应式设计 - 针对小屏幕手机优化 */
+@media screen and (max-width: 375px) {
+    body {
+        padding: 10px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+    
     .container {
         width: 100%;
+        padding: 10px;
     }
     
     h1 {
-        font-size: 60px;
+        font-size: 50px;
+        margin-bottom: 15px;
         text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff;
     }
     
-    .game-board {
-        width: 320px;
-        height: 320px;
+    .scores-container {
+        flex-direction: column;
+        align-items: center;
         gap: 10px;
-        margin: 0 auto;
+        margin-bottom: 15px;
+    }
+    
+    .score-box {
+        padding: 10px 20px;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .game-info {
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .game-info button {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 16px;
+    }
+    
+    .game-container {
+        padding: 10px;
+    }
+    
+    .game-board {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        gap: 8px;
     }
     
     .tile {
-        width: 70px;
-        height: 70px;
-        font-size: 30px;
+        font-size: min(20px, 7vw);
     }
     
     .tile-128,
     .tile-256,
     .tile-512 {
-        font-size: 25px;
+        font-size: min(18px, 6vw);
     }
     
     .tile-1024,
     .tile-2048 {
-        font-size: 20px;
+        font-size: min(16px, 5vw);
+    }
+    
+    .game-over-message,
+    .game-won-message {
+        padding: 20px;
+    }
+    
+    .game-over-message p,
+    .game-won-message p {
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+    
+    .game-rules {
+        font-size: 14px;
+        padding: 10px;
+        margin-top: 15px;
+    }
+    
+    /* 加载页面适配 */
+    .loading-content h2,
+    .loading-title {
+        font-size: 2rem;
+    }
+    
+    .loading-progress-container,
+    .watermark-loading-progress-container {
+        width: 250px;
+    }
+}
+
+/* 响应式设计 - 针对中等屏幕手机优化 */
+@media screen and (min-width: 376px) and (max-width: 520px) {
+    body {
+        padding: 15px;
+    }
+    
+    .container {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 60px;
+        margin-bottom: 20px;
+        text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff;
+    }
+    
+    .scores-container {
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .game-info {
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .game-info button {
+        padding: 10px 18px;
+        font-size: 15px;
+    }
+    
+    .game-container {
+        padding: 12px;
+    }
+    
+    .game-board {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        gap: 10px;
+    }
+    
+    .game-over-message p,
+    .game-won-message p {
+        font-size: 32px;
     }
 }
 

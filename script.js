@@ -1,3 +1,4 @@
+// 初始化游戏 - 移动优化版
 document.addEventListener('DOMContentLoaded', () => {
     // 游戏常量
     const GRID_SIZE = 4;
@@ -47,9 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const watermarkLoading = document.getElementById('watermark-loading');
     const watermarkLoadingBar = document.querySelector('.watermark-loading-bar');
     
-    // 显示加载页面动画
-    simulateLoading();
-    
     // 初始化游戏
     function startGame() {
         // 初始化游戏
@@ -59,28 +57,66 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStatsPanel();
     }
     
-
+    // 预加载关键资源和优化加载时间
+    function preloadAndStart() {
+        // 检测是否为移动设备
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // 为移动设备优化DOM交互
+        if (isMobile) {
+            // 移动设备上减少不必要的动画效果
+            document.body.classList.add('mobile-optimized');
+        }
+        
+        // 显示加载页面动画
+        simulateLoading();
+    }
     
-    // 模拟加载过程
+    // 启动预加载和游戏
+    preloadAndStart();
+    
+    
+    // 模拟加载过程 - 移动优化版
     function simulateLoading() {
+        // 检测网络状态
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const isSlowConnection = connection && (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g');
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // 根据设备类型和网络状况调整加载参数
+        const intervalTime = isMobile ? (isSlowConnection ? 40 : 30) : 20;
+        const finalDelay = isMobile ? (isSlowConnection ? 300 : 200) : 500;
+        
         let progress = 0;
         const interval = setInterval(() => {
-            progress += 1;
+            // 模拟渐进式加载进度
+            if (progress < 30) {
+                // 初始加载阶段快一点
+                progress += 2;
+            } else if (progress < 80) {
+                // 中间阶段根据设备调整
+                progress += isMobile ? 1 : 1.5;
+            } else {
+                // 最后阶段慢一点
+                progress += 0.5;
+            }
+            
+            progress = Math.min(progress, 100);
             loadingBar.style.width = `${progress}%`;
             
             if (progress >= 100) {
                 clearInterval(interval);
-                // 延迟隐藏加载页
+                // 延迟隐藏加载页 - 移动设备加载时间更短
                 setTimeout(() => {
                     loadingScreen.style.opacity = '0';
                     setTimeout(() => {
                         loadingScreen.style.display = 'none';
                         // 开始游戏
                         startGame();
-                    }, 1000);
-                }, 500);
+                    }, isMobile ? 500 : 1000);
+                }, finalDelay);
             }
-        }, 20);
+        }, intervalTime);
     }
     
     // 初始化游戏
@@ -657,17 +693,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // 处理触摸滑动
+    // 处理触摸滑动 - 优化版
     function handleTouchEvents() {
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchEndX = 0;
-        let touchEndY = 0;
+        let touchStartX = null;
+        let touchStartY = null;
+        const SWIPE_THRESHOLD = 15; // 降低阈值以提高响应速度
         
         gameBoard.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, false);
+            // 只处理单指触摸
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
         
         gameBoard.addEventListener('touchend', (e) => {
             // 如果游戏结束且未继续，不响应输入
@@ -675,33 +713,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
+            if (!touchStartX || !touchStartY) {
+                return;
+            }
             
-            // 计算滑动方向
-            const dx = touchEndX - touchStartX;
-            const dy = touchEndY - touchStartY;
+            let touchEndX = e.changedTouches[0].clientX;
+            let touchEndY = e.changedTouches[0].clientY;
             
-            // 确保滑动距离足够大
-            if (Math.abs(dx) > 20 || Math.abs(dy) > 20) {
-                // 判断是水平滑动还是垂直滑动
+            let dx = touchEndX - touchStartX;
+            let dy = touchEndY - touchStartY;
+            
+            // 判断滑动方向
+            if (Math.abs(dx) > SWIPE_THRESHOLD || Math.abs(dy) > SWIPE_THRESHOLD) {
                 if (Math.abs(dx) > Math.abs(dy)) {
                     // 水平滑动
-                    if (dx > 0) {
+                    if (dx > SWIPE_THRESHOLD) {
                         moveTiles('right');
-                    } else {
+                    } else if (dx < -SWIPE_THRESHOLD) {
                         moveTiles('left');
                     }
                 } else {
                     // 垂直滑动
-                    if (dy > 0) {
+                    if (dy > SWIPE_THRESHOLD) {
                         moveTiles('down');
-                    } else {
+                    } else if (dy < -SWIPE_THRESHOLD) {
                         moveTiles('up');
                     }
                 }
             }
-        }, false);
+            
+            touchStartX = null;
+            touchStartY = null;
+        }, { passive: true });
+        
+        // 优化页面滚动处理
+        gameBoard.addEventListener('touchmove', function(event) {
+            // 只有在游戏区域内的滑动才阻止默认行为
+            event.preventDefault();
+        }, { passive: false });
+        
+        // 添加触摸反馈效果
+        if (gameBoard) {
+            gameBoard.style.tapHighlightColor = 'transparent';
+            gameBoard.style.webkitTapHighlightColor = 'transparent';
+        }
     }
     
     // 事件监听器
